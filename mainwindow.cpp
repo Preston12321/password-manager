@@ -5,9 +5,15 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
 
-    // Disable the default status bar
-    ui->statusbar->hide();
-    //    ui->tableView->
+    icons = new QtAwesome(this);
+    icons->initFontAwesome();
+
+    model = new PasswordTableModel();
+    ui->tableView->setModel(model);
+
+    ui->actionAdd->setIcon(icons->icon(fa::plus));
+    ui->actionEdit->setIcon(icons->icon(fa::edit));
+    ui->actionDelete->setIcon(icons->icon(fa::trash));
 }
 
 MainWindow::~MainWindow() { delete ui; }
