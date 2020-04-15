@@ -1,7 +1,7 @@
 #include "passwordentry.h"
 
 PasswordEntry::PasswordEntry() {
-    // TODO: Implement constructor?
+    // MAYBE: Implement constructor
 }
 
 QString PasswordEntry::getEncodedText() const { return encodedText; }

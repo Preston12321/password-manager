@@ -1,3 +1,6 @@
 [submodule "QtAwesome"]
 	path = QtAwesome
 	url = https://github.com/gamecreature/QtAwesome.git
+[submodule "Qt-AES"]
+	path = Qt-AES
+	url = https://github.com/bricke/Qt-AES.git

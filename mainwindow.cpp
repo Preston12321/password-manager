@@ -10,6 +10,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     model = new PasswordTableModel();
     ui->tableView->setModel(model);
+    ui->tableView->horizontalHeader()->resizeSection(0, 400);
 
     ui->actionAdd->setIcon(icons->icon(fa::plus));
     ui->actionEdit->setIcon(icons->icon(fa::edit));

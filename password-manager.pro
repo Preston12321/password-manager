@@ -16,20 +16,29 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 include(QtAwesome/QtAwesome/QtAwesome.pri)
+include(Qt-AES/qaesencryption.pri)
 
 SOURCES += \
+    databasecontroller.cpp \
     main.cpp \
     mainwindow.cpp \
     passwordentry.cpp \
-    passwordtablemodel.cpp
+    passwordtablemodel.cpp \
+    setupdialog.cpp \
+    unlockdialog.cpp
 
 HEADERS += \
+    databasecontroller.h \
     mainwindow.h \
     passwordentry.h \
-    passwordtablemodel.h
+    passwordtablemodel.h \
+    setupdialog.h \
+    unlockdialog.h
 
 FORMS += \
-    mainwindow.ui
+    mainwindow.ui \
+    setupdialog.ui \
+    unlockdialog.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
