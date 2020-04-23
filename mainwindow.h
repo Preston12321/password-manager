@@ -4,7 +4,7 @@
 #include <QtAwesome.h>
 #include <QMainWindow>
 
-#include "passwordtablemodel.h"
+#include "databasecontroller.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -16,14 +16,22 @@ class MainWindow : public QMainWindow {
     Q_OBJECT
 
 public:
-    MainWindow(QWidget *parent = nullptr);
+    MainWindow(DatabaseController *database, QWidget *parent = nullptr);
     ~MainWindow();
 
-    // TODO: Add slots to detect New, Delete, and Edit actions
+private slots:
+    void on_actionAdd_triggered();
+
+    void on_actionDelete_triggered();
+
+    void on_actionEdit_triggered();
+
+    void insertEntry(const PasswordEntry &entry);
+    void deleteEntry(const PasswordEntry &entry);
 
 private:
     Ui::MainWindow *ui;
-    PasswordTableModel *model;
+    DatabaseController *database;
     QtAwesome *icons;
 };
 #endif  // MAINWINDOW_H

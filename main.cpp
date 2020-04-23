@@ -28,7 +28,7 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    MainWindow w;
+    MainWindow w(&database);
     w.show();
     return a.exec();
 }

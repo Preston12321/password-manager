@@ -20,22 +20,26 @@ include(Qt-AES/qaesencryption.pri)
 
 SOURCES += \
     databasecontroller.cpp \
+    editdialog.cpp \
     main.cpp \
     mainwindow.cpp \
-    passwordentry.cpp \
-    passwordtablemodel.cpp \
+    passwordvalidator.cpp \
     setupdialog.cpp \
+    strengthmeter.cpp \
     unlockdialog.cpp
 
 HEADERS += \
     databasecontroller.h \
+    editdialog.h \
     mainwindow.h \
     passwordentry.h \
-    passwordtablemodel.h \
+    passwordvalidator.h \
     setupdialog.h \
+    strengthmeter.h \
     unlockdialog.h
 
 FORMS += \
+    editdialog.ui \
     mainwindow.ui \
     setupdialog.ui \
     unlockdialog.ui
