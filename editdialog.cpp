@@ -8,11 +8,13 @@
 #include <QtDebug>
 
 EditDialog::EditDialog(DatabaseController *database, QtAwesome *iconLibrary,
-                       PasswordEntry entry, QWidget *parent)
+                       AudioController *audio, PasswordEntry entry,
+                       QWidget *parent)
     : QDialog(parent),
       ui(new Ui::EditDialog),
       database(database),
       icons(iconLibrary),
+      audio(audio),
       entry(entry) {
     ui->setupUi(this);
 
@@ -46,6 +48,8 @@ void EditDialog::togglePasswordVisible() {
 void EditDialog::on_buttonBox_accepted() {
     if (!ui->passwordEdit->hasAcceptableInput()) return;
 
+    audio->stopPlayback();
+
     entry.name = ui->nameEdit->text();
     entry.url = ui->urlEdit->text();
 
@@ -54,14 +58,27 @@ void EditDialog::on_buttonBox_accepted() {
     accept();
 }
 
-void EditDialog::on_buttonBox_rejected() {
-    database->deleteEntry(entry.id.toString());
-
-    reject();
-}
-
 void EditDialog::on_passwordEdit_textChanged(const QString &password) {
+    if (password.size() == 0) {
+        if (audio->isPlaying()) {
+            audio->stopPlayback();
+        }
+        return;
+    }
+
     int rating = StrengthMeter::ratePassword(password);
     qDebug() << "Password rating:" << rating;
-    // TODO: Play sound to signal password rating
+
+    audio->changePlaylist(rating - 1);
+
+    if (!audio->isPlaying()) {
+        qDebug() << "Audio not playing; beginning playback...";
+        audio->beginPlayback();
+    }
+}
+
+void EditDialog::on_EditDialog_finished(int result) {
+    Q_UNUSED(result);
+
+    audio->stopPlayback();
 }

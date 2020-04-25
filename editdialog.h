@@ -1,6 +1,7 @@
 #ifndef EDITDIALOG_H
 #define EDITDIALOG_H
 
+#include "audiocontroller.h"
 #include "databasecontroller.h"
 
 #include <QtAwesome.h>
@@ -16,7 +17,8 @@ class EditDialog : public QDialog {
 
 public:
     explicit EditDialog(DatabaseController *database, QtAwesome *iconLibrary,
-                        PasswordEntry entry, QWidget *parent = nullptr);
+                        AudioController *audio, PasswordEntry entry,
+                        QWidget *parent = nullptr);
     ~EditDialog();
 
 public slots:
@@ -25,14 +27,15 @@ public slots:
 private slots:
     void on_buttonBox_accepted();
 
-    void on_buttonBox_rejected();
-
     void on_passwordEdit_textChanged(const QString &password);
+
+    void on_EditDialog_finished(int result);
 
 private:
     Ui::EditDialog *ui;
     DatabaseController *database;
     QtAwesome *icons;
+    AudioController *audio;
     QToolButton *showButton;
 
     PasswordEntry entry;

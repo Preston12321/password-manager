@@ -4,6 +4,7 @@
 #include <QtAwesome.h>
 #include <QMainWindow>
 
+#include "audiocontroller.h"
 #include "databasecontroller.h"
 
 QT_BEGIN_NAMESPACE
@@ -33,5 +34,6 @@ private:
     Ui::MainWindow *ui;
     DatabaseController *database;
     QtAwesome *icons;
+    AudioController *audio;
 };
 #endif  // MAINWINDOW_H

@@ -13,6 +13,8 @@ MainWindow::MainWindow(DatabaseController *database, QWidget *parent)
     icons = new QtAwesome(this);
     icons->initFontAwesome();
 
+    audio = new AudioController(this);
+
     ui->actionAdd->setIcon(icons->icon(fa::plus));
     ui->actionEdit->setIcon(icons->icon(fa::edit));
     ui->actionDelete->setIcon(icons->icon(fa::trash));
@@ -20,8 +22,7 @@ MainWindow::MainWindow(DatabaseController *database, QWidget *parent)
     ui->tableWidget->horizontalHeader()->resizeSection(0, 200);
     ui->tableWidget->horizontalHeader()->resizeSection(1, 300);
     ui->tableWidget->insertColumn(3);
-    // TODO: Hide UUID column
-    //    ui->tableWidget->hideColumn(3);
+    ui->tableWidget->hideColumn(3);
 
     for (int i = 0; i < database->entryCount(); i++) {
         insertEntry(database->getEntry(i));
@@ -36,8 +37,14 @@ MainWindow::MainWindow(DatabaseController *database, QWidget *parent)
 MainWindow::~MainWindow() { delete ui; }
 
 void MainWindow::on_actionAdd_triggered() {
-    EditDialog d(database, icons, database->createEntry(), this);
-    d.exec();
+    auto entry = database->createEntry();
+
+    EditDialog d(database, icons, audio, entry, this);
+    auto result = d.exec();
+
+    if (result == QDialog::Rejected) {
+        database->deleteEntry(entry.id.toString());
+    }
 }
 
 void MainWindow::on_actionDelete_triggered() {
@@ -68,7 +75,8 @@ void MainWindow::on_actionEdit_triggered() {
 
     auto item = ui->tableWidget->item(row, 3);
 
-    EditDialog d(database, icons, database->getEntry(item->text()), this);
+    EditDialog d(database, icons, audio, database->getEntry(item->text()),
+                 this);
     d.exec();
 }
 
