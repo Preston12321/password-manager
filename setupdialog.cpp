@@ -2,7 +2,6 @@
 #include "ui_setupdialog.h"
 
 #include <QDialogButtonBox>
-#include <QtDebug>
 
 SetupDialog::SetupDialog(DatabaseController *database, QWidget *parent)
     : QDialog(parent), ui(new Ui::SetupDialog), database(database) {
@@ -28,6 +27,6 @@ void SetupDialog::attemptSetup() {
 void SetupDialog::setupSucceeded() { accept(); }
 
 void SetupDialog::setupFailed(const QString &message) {
-    qDebug() << message;
+    Q_UNUSED(message);
     reject();
 }

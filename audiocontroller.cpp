@@ -11,7 +11,6 @@ AudioController::AudioController(QObject *parent) : QObject(parent) {
     currentPlaylist = 0;
 
     QDir dir("./resources/audio/feedbackScale");
-    qDebug() << dir.entryList();
 
     for (int i = 1; i <= 5; i++) {
         auto playlist = new QMediaPlaylist(this);
@@ -19,15 +18,13 @@ AudioController::AudioController(QObject *parent) : QObject(parent) {
         playlists.append(playlist);
 
         if (!dir.cd(QString::number(i))) continue;
-        qDebug() << "Searching directory:" << dir.path();
 
         auto entries =
             dir.entryList(QDir::Files | QDir::NoDotAndDotDot, QDir::Name);
-        qDebug() << dir.entryList();
 
         for (auto entry : entries) {
             QString path = dir.absolutePath().append("/").append(entry);
-            qDebug() << "Found audio feedback file:" << path;
+
             playlist->addMedia(QMediaContent(QUrl::fromLocalFile(path)));
         }
 
@@ -43,10 +40,7 @@ bool AudioController::isPlaying() {
     return (player->state() == QMediaPlayer::PlayingState);
 }
 
-void AudioController::beginPlayback() {
-    player->play();
-    qDebug() << "Audio playback begun";
-}
+void AudioController::beginPlayback() { player->play(); }
 
 void AudioController::stopPlayback() { player->stop(); }
 

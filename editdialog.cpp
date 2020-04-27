@@ -5,7 +5,6 @@
 
 #include <QAction>
 #include <QToolButton>
-#include <QtDebug>
 
 EditDialog::EditDialog(DatabaseController *database, QtAwesome *iconLibrary,
                        AudioController *audio, PasswordEntry entry,
@@ -67,12 +66,10 @@ void EditDialog::on_passwordEdit_textChanged(const QString &password) {
     }
 
     int rating = StrengthMeter::ratePassword(password);
-    qDebug() << "Password rating:" << rating;
 
     audio->changePlaylist(rating - 1);
 
     if (!audio->isPlaying()) {
-        qDebug() << "Audio not playing; beginning playback...";
         audio->beginPlayback();
     }
 }

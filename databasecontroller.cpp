@@ -8,7 +8,6 @@
 #include <QJsonDocument>
 #include <QRandomGenerator>
 #include <QStandardPaths>
-#include <QtDebug>
 
 DatabaseController::DatabaseController(QObject *parent) : QObject(parent) {
     auto path =
@@ -31,21 +30,6 @@ DatabaseController::DatabaseController(QObject *parent) : QObject(parent) {
     unlocked = false;
 
     entries = QList<PasswordEntry *>();
-
-    // Fill with fake entries for now
-    //    for (int i = 1; i <= 25; i++) {
-    //        auto entry = new PasswordEntry();
-    //        auto now = QDateTime::currentDateTime();
-    //        entry->created = now;
-    //        entry->lastUpdated = now;
-    //        entry->name = QString::number(i);
-    //        entry->url = "https://www.example" + QString::number(i) + ".com/";
-    //        entry->id = QUuid::createUuid();
-    //        entry->initialVector = QByteArray();
-    //        entry->encodedPassword = QByteArray();
-    //        //        entries.append(entry);
-    //        insertEntry(entry);
-    //    }
 
     encoder = new QAESEncryption(QAESEncryption::AES_256, QAESEncryption::CBC);
 }
@@ -324,19 +308,13 @@ int DatabaseController::indexOf(const QString &id) const {
         }
     }
 
-    qDebug() << "Unable to find entry in database:" << id;
-    qDebug() << "Dumping database state...";
-    for (auto entry : entries) {
-        qDebug() << "Entry:" << entry->name << entry->id.toString();
-    }
-
     return -1;
 }
 
 bool DatabaseController::insertEntry(PasswordEntry *entry) {
     int left = 0;
     int right = entries.size() - 1;
-    int index;
+    int index = 0;
     while (left <= right) {
         index = (left + right) / 2;
         int compare = QString::compare(entry->id.toString(),
@@ -346,16 +324,6 @@ bool DatabaseController::insertEntry(PasswordEntry *entry) {
             return false;
         }
 
-        //        if (left == right) {
-        //            if (compare > 0) {
-        //                index += 1;
-        //            }
-        //            break;
-        //            // entries.insert(index, entry);
-        //            // emit entryInserted(*entry);
-        //            // return true;
-        //        }
-
         if (compare < 0) {
             right = index - 1;
         }
@@ -364,12 +332,8 @@ bool DatabaseController::insertEntry(PasswordEntry *entry) {
             left = ++index;
         }
     }
-    //    qDebug() << "Inserting entry " << entry->id.toString() << "at index"
-    //             << index;
+
     entries.insert(index, entry);
-    //    for (auto e : entries) {
-    //        qDebug() << "Entry:" << e->name << e->id.toString();
-    //    }
     emit entryInserted(*entry);
     return true;
 }

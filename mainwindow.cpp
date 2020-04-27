@@ -4,7 +4,6 @@
 
 #include <QMessageBox>
 #include <QTableWidget>
-#include <QtDebug>
 
 MainWindow::MainWindow(DatabaseController *database, QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow), database(database) {
@@ -104,7 +103,6 @@ void MainWindow::deleteEntry(const PasswordEntry &entry) {
         entry.id.toString(), Qt::MatchFlag::MatchCaseSensitive);
 
     if (matches.size() == 0) {
-        qDebug() << "Could not find entry in table:" << entry.id.toString();
         return;
     }
 
