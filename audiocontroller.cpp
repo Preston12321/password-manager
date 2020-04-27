@@ -14,11 +14,12 @@ AudioController::AudioController(QObject *parent) : QObject(parent) {
     qDebug() << dir.entryList();
 
     for (int i = 1; i <= 5; i++) {
-        if (!dir.cd(QString::number(i))) continue;
-        qDebug() << "Searching directory:" << dir.path();
-
         auto playlist = new QMediaPlaylist(this);
         playlist->setPlaybackMode(QMediaPlaylist::CurrentItemInLoop);
+        playlists.append(playlist);
+
+        if (!dir.cd(QString::number(i))) continue;
+        qDebug() << "Searching directory:" << dir.path();
 
         auto entries =
             dir.entryList(QDir::Files | QDir::NoDotAndDotDot, QDir::Name);
@@ -31,7 +32,6 @@ AudioController::AudioController(QObject *parent) : QObject(parent) {
         }
 
         playlist->setCurrentIndex(0);
-        playlists.append(playlist);
 
         dir.cdUp();
     }

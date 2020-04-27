@@ -1,8 +1,6 @@
 #include "passwordvalidator.h"
 
-PasswordValidator::PasswordValidator(QObject *parent) : QValidator(parent) {
-    // TODO: Implement constructor
-}
+PasswordValidator::PasswordValidator(QObject *parent) : QValidator(parent) {}
 
 QValidator::State PasswordValidator::validate(QString &input, int &pos) const {
     Q_UNUSED(pos);

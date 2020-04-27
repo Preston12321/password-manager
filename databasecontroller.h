@@ -9,6 +9,18 @@
 #include <QObject>
 #include <QString>
 
+enum CborKeys {
+    Version,
+    EntriesList,
+    EntryName,
+    EntryPassword,
+    EntryId,
+    EntryInitialVector,
+    EntryUrl,
+    EntryCreated,
+    EntryUpdated
+};
+
 class DatabaseController : public QObject {
     Q_OBJECT
 
@@ -33,6 +45,7 @@ public:
 public slots:
     void attemptUnlock(const QString &password);
     void attemptSetup(const QString &password);
+    void attemptSave();
 
 signals:
     void unlockAttempted(const bool &success);
@@ -46,7 +59,10 @@ private:
     static QByteArray hash(const QString &data);
     static QByteArray generateIV();
 
-    int indexOf(const QString &id);
+    QByteArray entriesToBytes() const;
+    bool bytesToEntries(const QByteArray &bytes);
+
+    int indexOf(const QString &id) const;
     bool insertEntry(PasswordEntry *entry);
 
     QFile *database;
@@ -57,7 +73,6 @@ private:
 
     QAESEncryption *encoder;
 
-    QByteArray initialVector;
     QByteArray masterKey;
 
     const QString CHALLENGE = QString("Send cat pics!!!");

@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QtAwesome.h>
+#include <QCloseEvent>
 #include <QMainWindow>
 
 #include "audiocontroller.h"
@@ -19,6 +20,9 @@ class MainWindow : public QMainWindow {
 public:
     MainWindow(DatabaseController *database, QWidget *parent = nullptr);
     ~MainWindow();
+
+protected:
+    void closeEvent(QCloseEvent *event) override;
 
 private slots:
     void on_actionAdd_triggered();

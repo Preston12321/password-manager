@@ -1,5 +1,8 @@
 #include "databasecontroller.h"
 
+#include <QCborArray>
+#include <QCborMap>
+#include <QCborValue>
 #include <QCryptographicHash>
 #include <QDir>
 #include <QJsonDocument>
@@ -30,23 +33,21 @@ DatabaseController::DatabaseController(QObject *parent) : QObject(parent) {
     entries = QList<PasswordEntry *>();
 
     // Fill with fake entries for now
-    for (int i = 1; i <= 25; i++) {
-        auto entry = new PasswordEntry();
-        auto now = QDateTime::currentDateTime();
-        entry->created = now;
-        entry->lastUpdated = now;
-        entry->name = QString::number(i);
-        entry->url = "https://www.example" + QString::number(i) + ".com/";
-        entry->id = QUuid::createUuid();
-        entry->initialVector = QByteArray();
-        entry->encodedPassword = QByteArray();
-        //        entries.append(entry);
-        insertEntry(entry);
-    }
+    //    for (int i = 1; i <= 25; i++) {
+    //        auto entry = new PasswordEntry();
+    //        auto now = QDateTime::currentDateTime();
+    //        entry->created = now;
+    //        entry->lastUpdated = now;
+    //        entry->name = QString::number(i);
+    //        entry->url = "https://www.example" + QString::number(i) + ".com/";
+    //        entry->id = QUuid::createUuid();
+    //        entry->initialVector = QByteArray();
+    //        entry->encodedPassword = QByteArray();
+    //        //        entries.append(entry);
+    //        insertEntry(entry);
+    //    }
 
     encoder = new QAESEncryption(QAESEncryption::AES_256, QAESEncryption::CBC);
-
-    initialVector = QByteArray();
 }
 
 DatabaseController::~DatabaseController() {
@@ -155,10 +156,17 @@ void DatabaseController::attemptUnlock(const QString &password) {
 
     if (QString(decodedChallenge) == CHALLENGE) {
         masterKey = hashedPassword;
-        // TODO: Decode remainder of database
 
-        unlocked = true;
-        emit unlockAttempted(true);
+        iv = database->read(16);
+        auto raw = encoder->removePadding(
+            encoder->decode(database->readAll(), hashedPassword, iv));
+
+        bool result = bytesToEntries(raw);
+
+        // TODO: Fail gracefully when unable to parse database file
+
+        unlocked = result;
+        emit unlockAttempted(result);
     } else {
         emit unlockAttempted(false);
     }
@@ -185,16 +193,26 @@ void DatabaseController::attemptSetup(const QString &password) {
 
     if (!opened) {
         emit setupFailed("Could not open database file.");
+        return;
     }
 
-    initialVector = generateIV();
-    database->write(initialVector);
-    database->write(
-        encoder->encode(CHALLENGE.toUtf8(), masterKey, initialVector));
-    database->flush();
+    attemptSave();
 
     unlocked = true;
     emit setupSucceeded();
+}
+
+void DatabaseController::attemptSave() {
+    database->seek(0);
+    database->resize(0);
+
+    auto iv = generateIV();
+    database->write(iv);
+    database->write(encoder->encode(CHALLENGE.toUtf8(), masterKey, iv));
+
+    iv = generateIV();
+    database->write(iv);
+    database->write(encoder->encode(entriesToBytes(), masterKey, iv));
 }
 
 QByteArray DatabaseController::hash(const QString &data) {
@@ -218,7 +236,75 @@ QByteArray DatabaseController::generateIV() {
     return result;
 }
 
-int DatabaseController::indexOf(const QString &id) {
+QByteArray DatabaseController::entriesToBytes() const {
+    QCborArray list;
+
+    for (auto entry : entries) {
+        QCborMap m{
+            {CborKeys::EntryId, QCborValue(entry->id)},
+            {CborKeys::EntryName, QCborValue(entry->name)},
+            {CborKeys::EntryUrl, QCborValue(entry->url)},
+            {CborKeys::EntryCreated, QCborValue(entry->created)},
+            {CborKeys::EntryUpdated, QCborValue(entry->lastUpdated)},
+            {CborKeys::EntryPassword, QCborValue(entry->encodedPassword)},
+            {CborKeys::EntryInitialVector, QCborValue(entry->initialVector)},
+        };
+
+        list.append(m.toCborValue());
+    }
+
+    QCborMap map{
+        {CborKeys::Version, QString("1.0")},
+        {CborKeys::EntriesList, list.toCborValue()},
+    };
+
+    return map.toCborValue().toCbor();
+}
+
+bool DatabaseController::bytesToEntries(const QByteArray &bytes) {
+    auto cbor = QCborValue::fromCbor(bytes);
+
+    if (cbor.type() != QCborValue::Map) {
+        return false;
+    }
+
+    auto map = cbor.toMap();
+
+    if (!map.contains(CborKeys::EntriesList)) {
+        return false;
+    }
+
+    auto list = map.value(CborKeys::EntriesList);
+
+    if (list.type() != QCborValue::Array) {
+        return false;
+    }
+
+    for (auto item : list.toArray()) {
+        if (item.type() != QCborValue::Map) continue;
+
+        auto data = item.toMap();
+
+        if (!data.contains(CborKeys::EntryId)) continue;
+
+        auto entry = new PasswordEntry();
+        entry->id = data.value(CborKeys::EntryId).toUuid();
+        entry->name = data.value(CborKeys::EntryName).toString();
+        entry->url = data.value(CborKeys::EntryUrl).toString();
+        entry->created = data.value(CborKeys::EntryCreated).toDateTime();
+        entry->lastUpdated = data.value(CborKeys::EntryUpdated).toDateTime();
+        entry->initialVector =
+            data.value(CborKeys::EntryInitialVector).toByteArray();
+        entry->encodedPassword =
+            data.value(CborKeys::EntryPassword).toByteArray();
+
+        insertEntry(entry);
+    }
+
+    return true;
+}
+
+int DatabaseController::indexOf(const QString &id) const {
     int left = 0;
     int right = entries.size() - 1;
     while (left <= right) {

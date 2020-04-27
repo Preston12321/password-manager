@@ -36,6 +36,12 @@ MainWindow::MainWindow(DatabaseController *database, QWidget *parent)
 
 MainWindow::~MainWindow() { delete ui; }
 
+void MainWindow::closeEvent(QCloseEvent *event) {
+    database->attemptSave();
+
+    event->accept();
+}
+
 void MainWindow::on_actionAdd_triggered() {
     auto entry = database->createEntry();
 
