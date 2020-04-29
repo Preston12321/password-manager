@@ -62,10 +62,49 @@ void EditDialog::on_passwordEdit_textChanged(const QString &password) {
         if (audio->isPlaying()) {
             audio->stopPlayback();
         }
+        ui->strengthMeter->setValue(0);
+        ui->strengthLabel->setText("");
         return;
     }
 
     int rating = StrengthMeter::ratePassword(password);
+
+    ui->strengthMeter->setValue(rating);
+
+    QString color;
+    QString label;
+
+    switch (rating) {
+        case 1:
+            color = "#f52905";
+            label = "Very Weak";
+            break;
+        case 2:
+            color = "#f89b03";
+            label = "Weak";
+            break;
+        case 3:
+            color = "#fbc701";
+            label = "Good";
+            break;
+        case 4:
+            color = "#73b327";
+            label = "Strong";
+            break;
+        case 5:
+            color = "#216e02";
+            label = "Very Strong";
+            break;
+        default:
+            color = "white";
+            label = "";
+            break;
+    }
+
+    ui->strengthLabel->setText(label);
+    ui->strengthMeter->setStyleSheet(
+        "QProgressBar::chunk:horizontal{background:" + color +
+        ";border-radius:3px;}");
 
     audio->changePlaylist(rating - 1);
 
