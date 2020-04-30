@@ -1,4 +1,4 @@
-QT       += core gui multimedia
+QT += core gui multimedia
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -25,8 +25,8 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     passwordvalidator.cpp \
+    ratingcontroller.cpp \
     setupdialog.cpp \
-    strengthmeter.cpp \
     unlockdialog.cpp
 
 HEADERS += \
@@ -36,8 +36,8 @@ HEADERS += \
     mainwindow.h \
     passwordentry.h \
     passwordvalidator.h \
+    ratingcontroller.h \
     setupdialog.h \
-    strengthmeter.h \
     unlockdialog.h
 
 FORMS += \
@@ -46,10 +46,15 @@ FORMS += \
     setupdialog.ui \
     unlockdialog.ui
 
-OTHER_FILES += $$PWD/resources/
+win32 {
+    FLAG = /s
+}
+unix {
+    FLAG = -r
+}
 
-#RESOURCES += \
-#    resources.qrc
+QMAKE_CLEAN += $$OUT_PWD/resources/ $$FLAG
+QMAKE_DISTCLEAN += $$OUT_PWD/resources/ $$FLAG
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -66,6 +71,13 @@ defineTest(copyToDestDir) {
     # replace slashes in destination path for Windows
     win32:dir ~= s,/,\\,g
 
+    win32 {
+        QMAKE_POST_LINK += rmdir /s /q $$shell_quote($$dir) &
+    }
+    unix {
+        QMAKE_POST_LINK += rm -r -f $$shell_quote($$dir);
+    }
+
     for(file, files) {
         # replace slashes in source path for Windows
         win32:file ~= s,/,\\,g
@@ -76,6 +88,7 @@ defineTest(copyToDestDir) {
     export(QMAKE_POST_LINK)
 }
 
-copyToDestDir($$OTHER_FILES, $$OUT_PWD/resources/)
-
 # END COPIED CODE
+
+copyToDestDir($$PWD/resources/, $$OUT_PWD/resources/)
+

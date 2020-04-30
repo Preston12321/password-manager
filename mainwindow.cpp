@@ -13,6 +13,7 @@ MainWindow::MainWindow(DatabaseController *database, QWidget *parent)
     icons->initFontAwesome();
 
     audio = new AudioController(this);
+    ratings = new RatingController(this);
 
     ui->actionAdd->setIcon(icons->icon(fa::plus));
     ui->actionEdit->setIcon(icons->icon(fa::edit));
@@ -44,7 +45,7 @@ void MainWindow::closeEvent(QCloseEvent *event) {
 void MainWindow::on_actionAdd_triggered() {
     auto entry = database->createEntry();
 
-    EditDialog d(database, icons, audio, entry, this);
+    EditDialog d(database, icons, audio, ratings, entry, this);
     auto result = d.exec();
 
     if (result == QDialog::Rejected) {
@@ -80,8 +81,8 @@ void MainWindow::on_actionEdit_triggered() {
 
     auto item = ui->tableWidget->item(row, 3);
 
-    EditDialog d(database, icons, audio, database->getEntry(item->text()),
-                 this);
+    EditDialog d(database, icons, audio, ratings,
+                 database->getEntry(item->text()), this);
     d.exec();
 }
 

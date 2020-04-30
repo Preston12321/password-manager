@@ -3,6 +3,7 @@
 
 #include "audiocontroller.h"
 #include "databasecontroller.h"
+#include "ratingcontroller.h"
 
 #include <QtAwesome.h>
 #include <QDialog>
@@ -17,8 +18,8 @@ class EditDialog : public QDialog {
 
 public:
     explicit EditDialog(DatabaseController *database, QtAwesome *iconLibrary,
-                        AudioController *audio, PasswordEntry entry,
-                        QWidget *parent = nullptr);
+                        AudioController *audio, RatingController *ratings,
+                        PasswordEntry entry, QWidget *parent = nullptr);
     ~EditDialog();
 
 public slots:
@@ -36,6 +37,7 @@ private:
     DatabaseController *database;
     QtAwesome *icons;
     AudioController *audio;
+    RatingController *ratings;
     QToolButton *showButton;
 
     PasswordEntry entry;

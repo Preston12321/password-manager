@@ -1,19 +1,19 @@
 #include "editdialog.h"
 #include "passwordvalidator.h"
-#include "strengthmeter.h"
 #include "ui_editdialog.h"
 
 #include <QAction>
 #include <QToolButton>
 
 EditDialog::EditDialog(DatabaseController *database, QtAwesome *iconLibrary,
-                       AudioController *audio, PasswordEntry entry,
-                       QWidget *parent)
+                       AudioController *audio, RatingController *ratings,
+                       PasswordEntry entry, QWidget *parent)
     : QDialog(parent),
       ui(new Ui::EditDialog),
       database(database),
       icons(iconLibrary),
       audio(audio),
+      ratings(ratings),
       entry(entry) {
     ui->setupUi(this);
 
@@ -67,7 +67,7 @@ void EditDialog::on_passwordEdit_textChanged(const QString &password) {
         return;
     }
 
-    int rating = StrengthMeter::ratePassword(password);
+    int rating = ratings->ratePassword(password);
 
     ui->strengthMeter->setValue(rating);
 

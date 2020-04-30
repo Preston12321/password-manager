@@ -7,6 +7,7 @@
 
 #include "audiocontroller.h"
 #include "databasecontroller.h"
+#include "ratingcontroller.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -39,5 +40,6 @@ private:
     DatabaseController *database;
     QtAwesome *icons;
     AudioController *audio;
+    RatingController *ratings;
 };
 #endif  // MAINWINDOW_H
