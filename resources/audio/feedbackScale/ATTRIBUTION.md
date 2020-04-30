@@ -4,7 +4,7 @@
 
 **Filename**: alarm.wav
 
-**License**: Sampling Plus 1.0 (https://creativecommons.org/licenses/sampling+/1.0/)
+**License**: [Creative Commons Sampling Plus 1.0](https://creativecommons.org/licenses/sampling+/1.0/)
 
 **Recorded By**: Muk1984
 
@@ -14,7 +14,7 @@
 
 **Filename**: trombone.wav
 
-**License**: Attribution 3.0
+**License**: [Creative Commons Attribution 3.0](https://creativecommons.org/licenses/by/3.0/)
 
 **Recorded by**: Joe Lamb
 
@@ -24,7 +24,7 @@
 
 **Filename**: thunder.wav
 
-**License**: Attribution 3.0
+**License**: [Creative Commons Attribution 3.0](https://creativecommons.org/licenses/by/3.0/)
 
 **Recorded by**: Mike Koenig
 
@@ -34,7 +34,7 @@
 
 **Filename**: cheering.wav
 
-**License**: Attribution 3.0
+**License**: [Creative Commons Attribution 3.0](https://creativecommons.org/licenses/by/3.0/)
 
 **Recorded by**: Jett Rifkin
 
@@ -44,6 +44,6 @@
 
 **Filename**: applause.wav
 
-**License**: Attribution 3.0
+**License**: [Creative Commons Attribution 3.0](https://creativecommons.org/licenses/by/3.0/)
 
 **Recorded by**: Yannick Lemieux
