@@ -61,34 +61,35 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
-# BEGIN COPIED CODE
-# SOURCE: https://retifrav.github.io/blog/2018/06/08/qmake-copy-files/
+# The code below is based on code from the following post:
+# https://retifrav.github.io/blog/2018/06/08/qmake-copy-files/
 
-# copies the given files to the destination directory
-defineTest(copyToDestDir) {
+# Copy the given files to the given subdirectory of the output directory
+defineTest(copyToOutputDir) {
     files = $$1
-    dir = $$2
-    # replace slashes in destination path for Windows
+    dir = $$OUT_PWD/$$2
+
+    # Use platform-specific slashes for output directory
     win32:dir ~= s,/,\\,g
 
-    win32 {
-        QMAKE_POST_LINK += rmdir /s /q $$shell_quote($$dir) &
-    }
-    unix {
-        QMAKE_POST_LINK += rm -r -f $$shell_quote($$dir);
-    }
+    !equals(OUT_PWD, $$PWD) {
+        win32 {
+            QMAKE_POST_LINK += rmdir /s /q $$shell_quote($$dir) &
+        }
+        unix {
+            QMAKE_POST_LINK += rm -r -f $$shell_quote($$dir);
+        }
 
-    for(file, files) {
-        # replace slashes in source path for Windows
-        win32:file ~= s,/,\\,g
+        for(file, files) {
+            # Use platform-specific slashes for input directory
+            win32:file ~= s,/,\\,g
 
-        QMAKE_POST_LINK += $$QMAKE_COPY_DIR $$shell_quote($$file) $$shell_quote($$dir) $$escape_expand(\\n\\t)
+            QMAKE_POST_LINK += $$QMAKE_COPY_DIR $$shell_quote($$file) $$shell_quote($$dir) $$escape_expand(\\n\\t)
+        }
+
+        export(QMAKE_POST_LINK)
     }
-
-    export(QMAKE_POST_LINK)
 }
 
-# END COPIED CODE
-
-copyToDestDir($$PWD/resources/, $$OUT_PWD/resources/)
+copyToOutputDir($$PWD/resources/, resources/)
 
